@@ -3,6 +3,6 @@ const router = express.Router();
 
 const userRouter = require('../app/controllers/user.controller')
 
-router.get('/ping', userRouter.ping);
+router.get('/list', userRouter.getUsers);
 
 module.exports = router;

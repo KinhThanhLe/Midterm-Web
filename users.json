@@ -1,0 +1,122 @@
+[
+    {
+        "full_name": "Nguyen Van A",
+        "username": "userA",
+        "password": "passwordA",
+        "created_at": "2023-11-01T09:00:00",
+        "updated_at": "2023-11-01T09:30:00",
+        "email": "userA@example.com",
+        "phone_number": "123-456-7890",
+        "birthday": "1990-05-15",
+        "social_id": "1234567890",
+        "address": "123 Main Street, City A"
+    },
+    {
+        "full_name": "Tran Thi B",
+        "username": "userB",
+        "password": "passwordB",
+        "created_at": "2023-11-02T10:15:00",
+        "updated_at": "2023-11-02T11:45:00",
+        "email": "userB@example.com",
+        "phone_number": "987-654-3210",
+        "birthday": "1985-12-10",
+        "social_id": "9876543210",
+        "address": "456 Elm Street, City B"
+    },
+    {
+        "full_name": "Le Van C",
+        "username": "userC",
+        "password": "passwordC",
+        "created_at": "2023-11-03T14:30:00",
+        "updated_at": "2023-11-03T15:45:00",
+        "email": "userC@example.com",
+        "phone_number": "555-123-4567",
+        "birthday": "1995-09-20",
+        "social_id": "5551234567",
+        "address": "789 Oak Street, City C"
+    },
+    {
+        "full_name": "Pham Thanh D",
+        "username": "userD",
+        "password": "passwordD",
+        "created_at": "2023-11-04T08:45:00",
+        "updated_at": "2023-11-04T09:30:00",
+        "email": "userD@example.com",
+        "phone_number": "111-999-8888",
+        "birthday": "1980-03-25",
+        "social_id": "1119998888",
+        "address": "321 Maple Street, City D"
+    },
+    {
+        "full_name": "Hoang Thu E",
+        "username": "userE",
+        "password": "passwordE",
+        "created_at": "2023-11-05T12:30:00",
+        "updated_at": "2023-11-05T13:15:00",
+        "email": "userE@example.com",
+        "phone_number": "222-333-4444",
+        "birthday": "1988-08-05",
+        "social_id": "2223334444",
+        "address": "789 Birch Street, City E"
+    },
+    {
+        "full_name": "Tran Nhat F",
+        "username": "userF",
+        "password": "passwordF",
+        "created_at": "2023-11-06T16:00:00",
+        "updated_at": "2023-11-06T16:45:00",
+        "email": "userF@example.com",
+        "phone_number": "999-888-7777",
+        "birthday": "1992-01-30",
+        "social_id": "9998887777",
+        "address": "654 Pine Street, City F"
+    },
+    {
+        "full_name": "Nguyen Hong G",
+        "username": "userG",
+        "password": "passwordG",
+        "created_at": "2023-11-07T07:15:00",
+        "updated_at": "2023-11-07T08:00:00",
+        "email": "userG@example.com",
+        "phone_number": "888-777-6666",
+        "birthday": "1993-06-22",
+        "social_id": "8887776666",
+        "address": "456 Cedar Street, City G"
+    },
+    {
+        "full_name": "Le Binh H",
+        "username": "userH",
+        "password": "passwordH",
+        "created_at": "2023-11-08T09:30:00",
+        "updated_at": "2023-11-08T10:15:00",
+        "email": "userH@example.com",
+        "phone_number": "777-666-5555",
+        "birthday": "1991-11-12",
+        "social_id": "7776665555",
+        "address": "987 Redwood Street, City H"
+    },
+    {
+        "full_name": "Pham An I",
+        "username": "userI",
+        "password": "passwordI",
+        "created_at": "2023-11-09T14:00:00",
+        "updated_at": "2023-11-09T14:45:00",
+        "email": "userI@example.com",
+        "phone_number": "666-555-4444",
+        "birthday": "1994-04-18",
+        "social_id": "6665554444",
+        "address": "321 Spruce Street, City I"
+    },
+    {
+        "full_name": "Hoang Van K",
+        "username": "userK",
+        "password": "passwordK",
+        "created_at": "2023-11-10T18:30:00",
+        "updated_at": "2023-11-10T19:15:00",
+        "email": "userK@example.com",
+        "phone_number": "444-333-2222",
+        "birthday": "1987-07-07",
+        "social_id": "4443332222",
+        "address": "555 Sequoia Street, City K"
+    }
+]

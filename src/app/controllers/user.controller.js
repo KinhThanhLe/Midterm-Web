@@ -1,8 +1,8 @@
+const userStore = require('../storages/user.store');
+
 class USerController {
-    ping(req, res) {
-        var result = {
-            "message":"ping 5000"
-        }
+    getUsers(req, res) {
+        var result = userStore.readData();
         res.send(result)
     }
 }
