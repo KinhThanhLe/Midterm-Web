@@ -24,6 +24,25 @@ class userStore {
 
     return users;
   };
+
+  writeData = (user) => {
+    var users = this.readData();
+    users.push(user);
+    const jsonData = JSON.stringify(users, null, 2);
+
+    fs.writeFileSync("users.json", jsonData, "utf8");
+  };
+
+  isExisted = (username) => {
+    var users = this.readData();
+
+    const user = users.find((user) => user.username === username);
+    if (user) {
+      return user.password;
+    } else {
+      return false;
+    }
+  };
 }
 
 module.exports = new userStore();
