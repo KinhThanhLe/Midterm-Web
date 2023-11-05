@@ -1,7 +1,7 @@
 const userRouter = require('./user.router');
 
 function Routers(app) {
-    app.use('/user', userRouter);
+    app.use('/api/user', userRouter);
 }
 
 module.exports = Routers;

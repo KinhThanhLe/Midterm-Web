@@ -1,27 +1,24 @@
-class User {
-  constructor(
-    fullName,
-    username,
-    password,
-    createdAt,
-    updatedAt,
-    email,
-    phoneNumber,
-    birthday,
-    socialId,
-    address
-  ) {
-    this.full_name = fullName;
-    this.username = username;
-    this.password = password;
-    this.created_at = createdAt;
-    this.updated_at = updatedAt;
-    this.email = email;
-    this.phone_number = phoneNumber;
-    this.birthday = birthday;
-    this.social_id = socialId;
-    this.address = address;
-  }
-}
+const mongoose = require("mongoose");
 
-module.exports = User;
+const Schema = mongoose.Schema;
+
+const User = new Schema(
+  {
+    full_name: { type: String },
+    username: { type: String },
+    password: { type: String },
+    created_at: { type: String },
+    updated_at: { type: String },
+    email: { type: String },
+    phone_number: { type: String },
+    birthday: { type: String },
+    social_id: { type: String },
+    address: { type: String },
+  },
+  {
+    collection: "users",
+    timestamps: true,
+  }
+);
+
+module.exports = mongoose.model("users", User);

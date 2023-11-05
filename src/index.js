@@ -4,6 +4,9 @@ require("dotenv").config();
 const app = express();
 const port = process.env.PORT;
 
+// connect to db
+require("./configs/db/index.db").connect();
+
 app.use(
   express.urlencoded({
     extended: true,
@@ -11,6 +14,7 @@ app.use(
 );
 
 app.use(express.json());
+
 
 //implement routers
 require("./routers/index.router")(app);
