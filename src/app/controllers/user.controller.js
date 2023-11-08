@@ -2,6 +2,12 @@ const userStore = require("../storages/user.store");
 const hasher = require("../../configs/hasher");
 const jwt = require("../../configs/jwt");
 const tokenStore = require("../storages/token.store");
+const { simpleSuccessResponse } = require("../views/response_to_client");
+const {
+  errorNotFound,
+  errorCustom,
+  errorBadRequest,
+} = require("../views/error");
 
 class USerController {
   // get all users
@@ -9,30 +15,27 @@ class USerController {
     var username = req.user;
     const user = await userStore.findUser(username);
     if (!user) {
-      res.status(404).json({ status: false, message: "User not found" });
+      res.status(404).send(errorNotFound("User"));
     }
-    res.status(200).json({ status: true, message: "Success!", data: user });
+    res.status(200).send(simpleSuccessResponse(user, "ok"));
   }
 
   // register POST /user/register
   async register(req, res) {
     var data = req.body;
     if (!data.username || !data.password) {
-      return res.status(400).json({
-        status: false,
-        message: "Username or password should not be blank!",
-      });
+      return res
+        .status(400)
+        .send(errorCustom(400, "Username or password not be blank!"));
     }
     const existingUser = await userStore.findUser(data.username);
     if (existingUser) {
-      return res
-        .status(400)
-        .json({ status: false, message: "Username is existed!" });
+      return res.status(400).send(errorCustom(400, "Username already exists!"));
     }
     data.password = hasher.encode(data.password);
     userStore.createUser(data);
 
-    res.status(201).json({ status: true, message: "Sign Up Success!" });
+    res.status(201).send(errorCustom(201, "Sign up successful!"));
   }
 
   // login POST /user/login
@@ -44,7 +47,7 @@ class USerController {
     if (!user || !hasher.compare(user.password, data.password)) {
       return res
         .status(400)
-        .json({ status: false, message: "Username or password is incorrect!" });
+        .send(errorCustom(400, "Username or password incorrect!"));
     }
 
     const token = jwt.generateToken(data);
@@ -56,11 +59,7 @@ class USerController {
       username: data.username,
     });
 
-    res.status(201).json({
-      status: true,
-      message: "Sign In Success!",
-      token: token,
-    });
+    res.status(201).send(simpleSuccessResponse(token, "Sign in successfully!"));
   }
 
   // [PATCH] /user/profile
@@ -69,12 +68,12 @@ class USerController {
     const data = req.body;
 
     if (!username || !data) {
-      res.status(400).json({ status: false, message: "Bad request!" });
+      res.status(400).send(errorBadRequest());
     }
 
     await userStore.editProfile(username, data);
     const newData = await userStore.findUser(username);
-    res.status(200).json({ status: true, message: "Success!", data: newData });
+    res.status(200).send(simpleSuccessResponse(data, newData));
   }
 
   // [DELETE] /user/logout
@@ -87,7 +86,7 @@ class USerController {
     }
 
     await tokenStore.deleteTokenByTokenStr(tokenStr);
-    res.status(200).json({ status: true, message: "Signed out successfully!" });
+    res.status(200).send(simpleSuccessResponse(null, "Sign out successfully!"));
   }
 }
 

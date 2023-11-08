@@ -29,7 +29,7 @@ User: {
 
     ```
     {
-        "status": false,
+        "statusCode": 400 - 500,
         "message": "...",
     }
     ```
@@ -38,7 +38,7 @@ User: {
 
     ```
     {
-        "status": true,
+        "statusCode": 200 - 300,
         "message": "...",
         "token": "..."
     }
@@ -50,7 +50,7 @@ User: {
 
     ```
     {
-        "status": false,
+        "statusCode": 400 - 500,
         "message": "...",
     }
     ```
@@ -59,7 +59,7 @@ User: {
 
     ```
     {
-        "status": true,
+        "statusCode": 200 - 300,
         "message": "...",
     }
     ```
@@ -69,7 +69,7 @@ User: {
 
     ```
     {
-        "status": false,
+        "statusCode": 400 - 500,
         "message": "...",
     }
     ```
@@ -78,7 +78,7 @@ User: {
 
     ```
     {
-        "status": true,
+        "statusCode": 200 - 300,
         "message": "...",
     }
     ```
@@ -91,7 +91,7 @@ User: {
 
     ```
     {
-        "status": false,
+        "statusCode": 400 - 500,
         "message": "...",
     }
     ```
@@ -100,7 +100,7 @@ User: {
 
     ```
     {
-        "status": true,
+        "statusCode": 200 - 300,
         "message": "...",
         "data" : {
             ...
@@ -115,7 +115,7 @@ User: {
 
     ```
     {
-        "status": false,
+        "statusCode": 400 - 500,
         "message": "...",
     }
     ```
@@ -124,7 +124,7 @@ User: {
 
     ```
     {
-        "status": true,
+        "statusCode": 200 - 300,
         "message": "...",
         "data" : {
             ...
