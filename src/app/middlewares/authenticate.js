@@ -53,6 +53,6 @@ module.exports = function Authenticated(req, res, next) {
     })
     .catch((error) => {
       console.error("Error checking token:", error);
-      res.status(500).send(errorInternalServer());
+      res.status(500).send(errorInternalServer(error));
     });
 };

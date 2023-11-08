@@ -21,9 +21,9 @@ User: {
 }
 ```
 
-## APIs
+## s
 
-* `POST api/user/login`: Sign in to the application.
+* `POST /user/login`: Sign in to the application.
     
     Failure:
 
@@ -44,7 +44,7 @@ User: {
     }
     ```
 
-* `POST api/user/register`: Sign up to the application
+* `POST /user/register`: Sign up to the application
 
     Failure:
 
@@ -63,7 +63,7 @@ User: {
         "message": "...",
     }
     ```
-* `DELETE api/user/logout`: Log out from the application
+* `DELETE /user/logout`: Log out from the application
 
     Failure:
 
@@ -85,7 +85,7 @@ User: {
 
     If user is logged out, the token will be deleted from the database.
 
-* `GET api/user/profile`:  Get the user's profile.
+* `GET /user/profile`:  Get the user's profile.
 
     Failure:
 
@@ -109,7 +109,7 @@ User: {
     }
     ```
    
-* `PATCH api/user/profile`:  Update the user's profile.
+* `PATCH /user/profile`:  Update the user's profile.
 
     Failure:
 
@@ -129,5 +129,28 @@ User: {
         "data" : {
             ...
             //Updated user profile data
+        }
+    }
+
+* `POST /upload/image`:  Upload the image with key `file`.
+
+    Failure:
+
+    ```
+    {
+        "statusCode": 400 - 500,
+        "message": "...",
+    }
+    ```
+
+    Success:
+
+    ```
+    {
+        "statusCode": 200 - 300,
+        "message": "...",
+        "data" : {
+            ...
+            //Data image
         }
     }

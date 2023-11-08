@@ -5,10 +5,11 @@ function errorCustom(statusCode, message) {
   };
 }
 
-function errorInternalServer() {
+function errorInternalServer(mgs) {
   return {
     statusCode: 500,
-    message: "Internal Server Error",
+    type: "Internal Server Error",
+    message: mgs,
   };
 }
 
