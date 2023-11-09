@@ -6,8 +6,9 @@ import SignupPage from './pages/Signup/SignupPage';
 import Footer from './components/common/Footer';
 import ProfilePage from './pages/Profile/ProfilePage';
 import Header from './components/common/Header';
+import HomePage from './pages/Home/Home';
 
-const lightHeaderPaths = ["/profile"]
+const lightHeaderPaths = ["/profile", "/home"]
 const isNoHeaderFooterPaths = ["/sign-in", "/sign-up"]
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
       {!isNoHeader && <Header isLight={isLightHeader}></Header>}
       <Routes>
         <Route path="/" element={<LandingPage />} />
+        <Route path="/home" element={<HomePage />} />
         <Route path="/sign-in" element={<LoginPage />} />
         <Route path="/sign-up" element={<SignupPage />} />
         <Route path="/profile" element={<ProfilePage />} />
