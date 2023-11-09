@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import UserMenu from "./UserMenu";
 import { Link } from "react-router-dom";
 
-
 const menuItems = [
   {
     href: "/home",
@@ -18,7 +17,7 @@ const menuItems = [
   },
 ];
 
-function Header({isLight}) {
+function Header({ isLight }) {
   const [user, setUser] = useState();
 
   useEffect(() => {
@@ -40,17 +39,19 @@ function Header({isLight}) {
         </Link>
         <div className="flex gap-10 items-center">
           {menuItems.map((item) => (
-            <a
-              className={`font-semibold ${
-                isLight ? "text-blue-gray-900" : "text-white"
-              } hover:text-gray-500`}
-              href={item.href}
-            >
-              {item.title}
-            </a>
+            <Link to={item.href}>
+              <h6
+                className={`font-semibold ${
+                  isLight ? "text-blue-gray-900" : "text-white"
+                } hover:text-gray-500`}
+              >
+                {item.title}
+              </h6>
+            </Link>
           ))}
           {!user && (
-            <Link to="/sign-in"
+            <Link
+              to="/sign-in"
               className={`font-semibold ${
                 isLight ? "text-blue-gray-900" : "text-white"
               } hover:text-gray-500`}
