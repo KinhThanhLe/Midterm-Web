@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import UserMenu from "./UserMenu";
 import { Link } from "react-router-dom";
+import { useAuth } from '../../AuthContext';
 
 const menuItems = [
   {
@@ -18,20 +19,18 @@ const menuItems = [
 ];
 
 function Header({ isLight }) {
-  const [user, setUser] = useState();
+  const [user, setUser] = useState(null);
+  const { token, login, logout } = useAuth();
 
   useEffect(() => {
-    const loggedInUser = localStorage.getItem("user");
-    if (loggedInUser) {
-      setUser(JSON.parse(loggedInUser));
-    }
-  }, []);
+    const loggedInUser = token;
+    setUser(loggedInUser);
+  }, [token]);
 
   return (
     <div
-      className={`w-full flex justify-center absolute top-0 left-0 z-2 ${
-        isLight && "bg-white shadow-md"
-      }`}
+      className={`w-full flex justify-center absolute top-0 left-0 z-2 ${isLight && "bg-white shadow-md"
+        }`}
     >
       <div className="w-9/12 flex justify-between items-center h-16">
         <Link to="/" className="font-black hover:cursor-pointer text-gray-500">
@@ -41,9 +40,8 @@ function Header({ isLight }) {
           {menuItems.map((item) => (
             <Link to={item.href}>
               <h6
-                className={`font-semibold ${
-                  isLight ? "text-blue-gray-900" : "text-white"
-                } hover:text-gray-500`}
+                className={`font-semibold ${isLight ? "text-blue-gray-900" : "text-white"
+                  } hover:text-gray-500`}
               >
                 {item.title}
               </h6>
@@ -52,9 +50,8 @@ function Header({ isLight }) {
           {!user && (
             <Link
               to="/sign-in"
-              className={`font-semibold ${
-                isLight ? "text-blue-gray-900" : "text-white"
-              } hover:text-gray-500`}
+              className={`font-semibold ${isLight ? "text-blue-gray-900" : "text-white"
+                } hover:text-gray-500`}
               href="#"
             >
               Sign in

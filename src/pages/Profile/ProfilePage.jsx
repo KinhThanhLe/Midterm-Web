@@ -1,24 +1,28 @@
 import { Input, Dialog } from "@material-tailwind/react";
 import Footer from "../../components/common/Footer";
 import Header from "../../components/common/Header";
+import { useAuth } from "../../AuthContext";
 import { useEffect, useState } from "react";
 import { useFilePicker } from "use-file-picker";
 import {
   FileAmountLimitValidator,
   FileTypeValidator,
 } from "use-file-picker/validators";
-
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 const EventSource = {
-  IMAGE_CHANGE: "image_change",
-  PROFILE_CHANGE: "profile_change",
+  IMAGE_CHANGE: "image-change",
+  PROFILE_CHANGE: "profile-change",
 };
 
 function ProfilePage() {
+  const navigate = useNavigate();
+  const { token, login, logout } = useAuth();
   const [edit, setEdit] = useState(false);
   const [changingImage, setChanginImage] = useState(false);
-  const [image, setImage] = useState(
-    "https://i.pinimg.com/736x/2e/e4/f3/2ee4f3c2d6cf3a87427e309177c6149b.jpg"
-  );
+  const [fileName, setFileName] = useState("");
+
+  const [image, setImage] = useState("");
   const { openFilePicker, filesContent, loading, errors } = useFilePicker({
     readAs: "DataURL",
     accept: "image/*",
@@ -29,15 +33,49 @@ function ProfilePage() {
     ],
     onFilesSuccessfullySelected: (data) => {
       // this callback is called when there were no validation errors
-      setImage(data.filesContent[0].content);
+      setImage(data?.filesContent[0]?.content);
       setChanginImage(true);
+      // Extract the file name from the selected files
+      const fileName = data?.filesContent[0]?.name;
+      setFileName(fileName);
     },
   });
+
+  const handleUpdateUser = async () => {
+    try {
+      const response = await axios.patch(
+        "https://be-midterm-web.vercel.app/user/profile",
+        {
+          username: userData.username,
+          password: userData.password,
+          full_name: userData.full_name,
+          birthday: userData.birthday,
+          address: userData.address,
+          email: userData.email,
+          phone_number: userData.phone_number,
+          image: {
+            url: userData.image.url,
+          },
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token.data}`, // Assuming you have a token variable
+          },
+        }
+      );
+
+      // Handle success, e.g., navigate to a different page
+      console.log("User updated successfully:", response?.data);
+    } catch (error) {
+      // Handle error, e.g., show an error message
+      console.error("Error updating user:", error.message);
+    }
+  };
 
   function onSaveProfileClick() {
     // get the new profile and send it to server
     // save the new user to
-
+    handleUpdateUser();
     setEdit(false);
   }
 
@@ -46,15 +84,19 @@ function ProfilePage() {
   }
 
   function onCancelClick(source) {
+    console.log(source);
     switch (source) {
-      case "image-changing":
+      case "image-change":
         setChanginImage(false);
+        setImage(userData?.image?.url);
         // reload user image here
         break;
 
-      case "profile-changing":
+      case "profile-change":
         // reload user profile here
         setEdit(false);
+        break;
+      default:
         break;
     }
   }
@@ -65,8 +107,69 @@ function ProfilePage() {
 
   function handleSaveImage() {
     // send update image request to server
+    const imageData = {
+      image: {
+        name: fileName, // or the updated image URL
+      },
+    };
+
+    axios.post("https://be-midterm-web.vercel.app/upload/image", imageData, {
+      headers: {
+        Authorization: `Bearer ${token.data}`,
+      },
+    })
+      .then((response) => {
+        console.log("Image updated successfully:", response?.data);
+      })
+      .catch((error) => {
+        console.error("Error updating image:", error.message);
+      });
     setChanginImage(false);
   }
+
+  const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const response = await axios.get(
+          "https://be-midterm-web.vercel.app/user/profile",
+          {
+            headers: {
+              Authorization: `Bearer ${token.data}`,
+            },
+          }
+        );
+        console.log(response);
+        setUserData(response?.data?.data);
+      } catch (error) {
+        if (error?.response?.status === 401) {
+          logout();
+          navigate("/");
+        }
+
+        // Xử lý các lỗi khác theo ý của bạn
+        console.error("Error fetching user profile:", error?.message);
+      }
+    };
+
+    // Gọi hàm fetchUserProfile khi component được tạo
+    fetchUserProfile();
+  }, [token, logout]);
+
+  const [fullName, setFullName] = useState(userData?.full_name || "");
+  const [birthday, setBirthday] = useState(userData?.birthday || "");
+  const [email, setEmail] = useState(userData?.email || "");
+  const [phoneNumber, setPhoneNumber] = useState(userData?.phone_number || "");
+  const [address, setAddress] = useState(userData?.address || "");
+
+  // Update the userData state when the input fields change
+  const handleInputChange = (name, value) => {
+    setUserData((prevUserData) => ({
+      ...prevUserData,
+      [name]: value,
+    }));
+  };
 
   return (
     <div>
@@ -78,7 +181,7 @@ function ProfilePage() {
           <div className="w-9/12 h-full mx-auto flex items-center">
             <div className="w-5/12">
               <h1 className="text-4xl text-gray-50 font-semibold">
-                Hello Hien
+                Hello {userData?.full_name}
               </h1>
               <p className="mt-4 text-gray-400">
                 This is your profile page. You can see the information
@@ -91,8 +194,9 @@ function ProfilePage() {
           <div className="w-10/12 mx-auto  z-10  flex justify-end">
             <div>
               <img
+                alt=""
                 className="w-56 h-56 rounded-full object-cover"
-                src={image}
+                src={image ? image : userData?.image.url}
               ></img>
               {/* https://i.pinimg.com/736x/2e/e4/f3/2ee4f3c2d6cf3a87427e309177c6149b.jpg */}
               <div className="-mt-56 w-56 h-56 flex gap-2 justify-center items-center">
@@ -204,7 +308,10 @@ function ProfilePage() {
                     name="full_name"
                     variant="standard"
                     label="Full name"
-                    value="Hien Thai"
+                    onChange={(e) => {
+                      handleInputChange("full_name", e.target.value);
+                    }}
+                    defaultValue={userData?.full_name}
                     readOnly={!edit}
                     size="lg"
                   />
@@ -213,7 +320,10 @@ function ProfilePage() {
                     type="date"
                     variant="standard"
                     label="Birthday"
-                    value="2023-11-22"
+                    onChange={(e) => {
+                      handleInputChange("birthday", e.target.value);
+                    }}
+                    defaultValue={userData?.birthday}
                     readOnly={!edit}
                     size="lg"
                   />
@@ -221,7 +331,10 @@ function ProfilePage() {
                     name="email"
                     variant="standard"
                     label="Email"
-                    value="abc@gmail.com"
+                    onChange={(e) => {
+                      handleInputChange("email", e.target.value);
+                    }}
+                    defaultValue={userData?.email}
                     readOnly={!edit}
                     size="lg"
                   />
@@ -229,7 +342,10 @@ function ProfilePage() {
                     name="phone_number"
                     variant="standard"
                     label="phone_number"
-                    value="0123456789"
+                    onChange={(e) => {
+                      handleInputChange("phone_number", e.target.value);
+                    }}
+                    defaultValue={userData?.phone_number}
                     readOnly={!edit}
                     size="lg"
                   />
@@ -238,7 +354,10 @@ function ProfilePage() {
                       name="address"
                       variant="standard"
                       label="Address"
-                      value="KTX khu B, Dong Hoa ward, Di An district, Binh Duong province"
+                      onChange={(e) => {
+                        handleInputChange("address", e.target.value);
+                      }}
+                      defaultValue={userData?.address}
                       readOnly={!edit}
                       size="lg"
                     />
@@ -254,7 +373,7 @@ function ProfilePage() {
                     name="Username"
                     variant="standard"
                     label="Username"
-                    value="hienthai"
+                    value={userData?.username}
                     readOnly={true}
                     size="lg"
                   />

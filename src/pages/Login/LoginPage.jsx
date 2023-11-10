@@ -1,25 +1,54 @@
 import { Button, Input } from "@material-tailwind/react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../../AuthContext';
+import axios from "axios";
 
 function LoginPage() {
-    const [state, setState] = useState({
-      username: "",
-      password: ""
+  const { token, login, logout } = useAuth();
+  const navigate = useNavigate()
+  const [state, setState] = useState({
+    username: "",
+    password: ""
+  });
+  const [error, setError] = useState("");
+
+  const handleLogin = async (userName, passWord) => {
+    try {
+      const response = await axios.post('https://be-midterm-web.vercel.app/user/login', {
+        username: userName,
+        password: passWord,
+      });
+      const receivedToken = response.data;
+      login(receivedToken);
+      navigate('/profile');
+    } catch (error) {
+      setError("Username or password incorrect!");
+    }
+  };
+
+
+
+  function hanldeInputChange(event) {
+    const field = event.target.name;
+    setState({
+      ...state,
+      [field]: event.target.value
     });
+  }
 
-    function hanldeInputChange(event) {
-        const field = event.target.name;
-        setState({
-          ...state,
-          [field]: event.target.value
-        })
-    }
+  function handleFormSubmit(event) {
+    event.preventDefault();
 
-    function handleFormSubmit(event) {
-      event.preventDefault();
-      alert(JSON.stringify(state));
+    if (state.username === "" || state.password === "") {
+      setError("Please fill in both username and password");
+    } else {
+      setError("");
+      // Pass the history object to handleLogin
+      handleLogin(state.username, state.password);
     }
+  }
+
 
   return (
     <div className="min-h-screen bg-deep-purple-900 py-20">
@@ -32,6 +61,9 @@ function LoginPage() {
           <h1 className="text-center font-extrabold text-3xl mt-5 mb-10 text-blue-gray-800">
             Sign in
           </h1>
+          {error && (
+            <h6 className="text-red-600 italic text-sm mb-4">{error}</h6>
+          )}
           <div className="flex flex-col gap-10">
             <Input
               name="username"
@@ -46,9 +78,6 @@ function LoginPage() {
               type="password"
               onChange={(event) => hanldeInputChange(event)}
             ></Input>
-            <h6 className="text-red-600 italic text-sm">
-              Username already existed. Please use another one!
-            </h6>
             <Button
               className="w-full text-center p-3 bg-blue-400 text-sm rounded-md font-semibold"
               type="submit"

@@ -1,6 +1,7 @@
 import { Button, Input } from "@material-tailwind/react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function SignupPage() {
   const [state, setState] = useState({
@@ -12,6 +13,30 @@ function SignupPage() {
     username: "",
     password: "",
   });
+  const navigate = useNavigate()
+  const [error, setError] = useState("");
+
+  const handleRegister = async (userName, passWord, fullName, birthDay, addDress, email, phoneNumber) => {
+    try {
+      const response = await axios.post('https://be-midterm-web.vercel.app/user/register', {
+        username: userName,
+        password: passWord,
+        full_name: fullName,
+        birthday: birthDay,
+        address: addDress,
+        email: email,
+        phone_number: phoneNumber,
+        image: {
+          url: "https://t4.ftcdn.net/jpg/05/49/98/39/360_F_549983970_bRCkYfk0P6PP5fKbMhZMIb07mCJ6esXL.jpg"
+        }
+      });
+
+      navigate('/sign-in');
+    } catch (error) {
+      setError("Username or password incorrect!");
+    }
+  };
+
 
   function hanldeInputChange(event) {
     const field = event.target.name;
@@ -23,7 +48,13 @@ function SignupPage() {
 
   function handleFormSubmit(event) {
     event.preventDefault();
-    alert(JSON.stringify(state));
+    if (state.username === "" || state.password === "" || state.address === "" || state.birthday === "" || state.email === "" || state.full_name === "" || state.phone_number === "") {
+      setError("Please fill in all field");
+    } else {
+      setError("");
+      // Pass the history object to handleLogin
+      handleRegister(state.username, state.password, state.full_name, state.birthday, state.address, state.email, state.phone_number);
+    }
   }
 
   return (
@@ -37,6 +68,9 @@ function SignupPage() {
           <h1 className="text-center font-extrabold text-3xl mt-5 mb-10 text-blue-gray-800">
             Sign up
           </h1>
+          {error && (
+            <h6 className="text-red-600 italic text-sm mb-4">{error}</h6>
+          )}
           <div className="flex flex-col gap-10">
             <Input
               name="full_name"
@@ -82,9 +116,7 @@ function SignupPage() {
               type="password"
               onChange={(event) => hanldeInputChange(event)}
             ></Input>
-            <h6 className="text-red-600 italic text-sm">
-              Username already existed. Please use another one!
-            </h6>
+
             <Button
               className="w-full text-center p-3 bg-blue-400 text-sm rounded-md font-semibold"
               type="submit"
