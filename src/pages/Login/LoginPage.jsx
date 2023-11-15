@@ -20,7 +20,9 @@ function LoginPage() {
         password: passWord,
       });
       const receivedToken = response.data;
+      localStorage.setItem('token', receivedToken.data);
       login(receivedToken);
+
       navigate('/profile');
     } catch (error) {
       setError("Username or password incorrect!");

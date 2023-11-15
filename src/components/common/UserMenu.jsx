@@ -26,15 +26,12 @@ function UserMenu({ user, isLight }) {
       try {
         const response = await axios.get('https://be-midterm-web.vercel.app/user/profile', {
           headers: {
-            Authorization: `Bearer ${token.data}`,
+            Authorization: `Bearer ${token?.data}`,
           },
         });
-        setUserData(response.data.data);
+        setUserData(response?.data?.data);
       } catch (error) {
-        if (error?.response?.status === 401) {
-          logout();
-          navigate('/')
-        }
+
 
         // Xử lý các lỗi khác theo ý của bạn
         console.error('Error fetching user profile:', error.message);

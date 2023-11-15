@@ -130,23 +130,22 @@ function ProfilePage() {
   const [userData, setUserData] = useState(null);
 
   useEffect(() => {
+    const storedToken = localStorage.getItem('token');
+
+    console.log(storedToken);
     const fetchUserProfile = async () => {
       try {
         const response = await axios.get(
           "https://be-midterm-web.vercel.app/user/profile",
           {
             headers: {
-              Authorization: `Bearer ${token.data}`,
+              Authorization: `Bearer ${storedToken}`,
             },
           }
         );
-        console.log(response);
         setUserData(response?.data?.data);
       } catch (error) {
-        if (error?.response?.status === 401) {
-          logout();
-          navigate("/");
-        }
+
 
         // Xử lý các lỗi khác theo ý của bạn
         console.error("Error fetching user profile:", error?.message);
@@ -155,7 +154,7 @@ function ProfilePage() {
 
     // Gọi hàm fetchUserProfile khi component được tạo
     fetchUserProfile();
-  }, [token, logout]);
+  }, [token, logout, navigate]);
 
   const [fullName, setFullName] = useState(userData?.full_name || "");
   const [birthday, setBirthday] = useState(userData?.birthday || "");

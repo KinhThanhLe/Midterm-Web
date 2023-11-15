@@ -1,4 +1,4 @@
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { Route, Routes, useLocation, Navigate } from 'react-router-dom';
 import './App.css';
 import LandingPage from './pages/Landing/LandingPage';
 import LoginPage from './pages/Login/LoginPage';
@@ -11,10 +11,12 @@ import HomePage from './pages/Home/Home';
 const lightHeaderPaths = ["/profile", "/home"]
 const isNoHeaderFooterPaths = ["/sign-in", "/sign-up"]
 
+
 function App() {
   const location = useLocation();
   const isLightHeader = lightHeaderPaths.includes(location.pathname);
   const isNoHeader = isNoHeaderFooterPaths.includes(location.pathname);
+  const isLoggedIn = localStorage.getItem('token');
 
   return (
     <>
@@ -24,7 +26,7 @@ function App() {
         <Route path="/home" element={<HomePage />} />
         <Route path="/sign-in" element={<LoginPage />} />
         <Route path="/sign-up" element={<SignupPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
+        <Route path='/profile' element={isLoggedIn ? <ProfilePage /> : <LandingPage />} />
       </Routes>
       {!isNoHeader && <Footer></Footer>}
     </>

@@ -23,8 +23,7 @@ function Header({ isLight }) {
   const { token, login, logout } = useAuth();
 
   useEffect(() => {
-    const loggedInUser = token;
-    setUser(loggedInUser);
+    setUser(token);
   }, [token]);
 
   return (
@@ -37,6 +36,16 @@ function Header({ isLight }) {
           <h1 className="text-2xl">GROUPXX</h1>
         </Link>
         <div className="flex gap-10 items-center">
+          {user && (
+            <Link
+              to="/profile"
+              className={`font-semibold ${isLight ? "text-blue-gray-900" : "text-white"
+                } hover:text-gray-500`}
+              href="#"
+            >
+              Profile
+            </Link>
+          )}
           {menuItems.map((item) => (
             <Link to={item.href}>
               <h6
