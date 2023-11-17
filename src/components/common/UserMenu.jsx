@@ -22,11 +22,12 @@ function UserMenu({ user, isLight }) {
   const [userData, setUserData] = useState(null);
 
   useEffect(() => {
+    const tokenAvailable = localStorage.getItem('token');
     const fetchUserProfile = async () => {
       try {
         const response = await axios.get('https://be-midterm-web.vercel.app/user/profile', {
           headers: {
-            Authorization: `Bearer ${token?.data}`,
+            Authorization: `Bearer ${tokenAvailable}`,
           },
         });
         setUserData(response?.data?.data);
