@@ -85,7 +85,7 @@ function ProfilePage() {
   function handleSaveImage() {
     // send update image request to server
     let data = new FormData();
-    data.append('image', image, image.name);
+    data.append('file', image, image.name);
 
     // axios.post("https://be-midterm-web.vercel.app/upload/image", imageData, {
     //   headers: {
@@ -196,7 +196,7 @@ function ProfilePage() {
                       type="file"
                       className="hidden"
                       accept="image/*"
-                      
+
                       onChange={(event) => handleUploadImage(event)}
                     ></input>
                   </label>
