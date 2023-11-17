@@ -1,13 +1,7 @@
-import { Input, Dialog } from "@material-tailwind/react";
-import Footer from "../../components/common/Footer";
-import Header from "../../components/common/Header";
+import { Input } from "@material-tailwind/react";
+import FormData from 'form-data'
 import { useAuth } from "../../AuthContext";
 import { useEffect, useState } from "react";
-import { useFilePicker } from "use-file-picker";
-import {
-  FileAmountLimitValidator,
-  FileTypeValidator,
-} from "use-file-picker/validators";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 const EventSource = {
@@ -20,26 +14,7 @@ function ProfilePage() {
   const { token, login, logout } = useAuth();
   const [edit, setEdit] = useState(false);
   const [changingImage, setChanginImage] = useState(false);
-  const [fileName, setFileName] = useState("");
-
   const [image, setImage] = useState("");
-  const { openFilePicker, filesContent, loading, errors } = useFilePicker({
-    readAs: "DataURL",
-    accept: "image/*",
-    multiple: true,
-    validators: [
-      new FileAmountLimitValidator({ max: 1 }),
-      new FileTypeValidator(["jpg", "png"]),
-    ],
-    onFilesSuccessfullySelected: (data) => {
-      // this callback is called when there were no validation errors
-      setImage(data?.filesContent[0]?.content);
-      setChanginImage(true);
-      // Extract the file name from the selected files
-      const fileName = data?.filesContent[0]?.name;
-      setFileName(fileName);
-    },
-  });
 
   const handleUpdateUser = async () => {
     try {
@@ -101,25 +76,33 @@ function ProfilePage() {
     }
   }
 
-  function handleUploadImage() {
-    openFilePicker();
+  function handleUploadImage(event) {
+    console.log(event.target.files[0]);
+    setImage(event.target.files[0]);
+    setChanginImage(true);
   }
 
   function handleSaveImage() {
     // send update image request to server
-    const imageData = {
-      image: {
-        name: fileName, // or the updated image URL
-      },
-    };
+    let data = new FormData();
+    data.append('image', image, image.name);
 
-    axios.post("https://be-midterm-web.vercel.app/upload/image", imageData, {
-      headers: {
-        Authorization: `Bearer ${token.data}`,
-      },
-    })
+    // axios.post("https://be-midterm-web.vercel.app/upload/image", imageData, {
+    //   headers: {
+    //     Authorization: `Bearer ${token.data}`,
+    //   },
+    // })
+
+    axios
+      .post("https://be-midterm-web.vercel.app/upload/image", data, {
+        headers: {
+          Authorization: `Bearer ${token.data}`,
+          accept: "application/json",
+          "Content-Type": `multipart/form-data; boundary=${data._boundary}`,
+        },
+      })
       .then((response) => {
-        console.log("Image updated successfully:", response?.data);
+        console.log("Image updated successfully: ", response);
       })
       .catch((error) => {
         console.error("Error updating image:", error.message);
@@ -195,15 +178,12 @@ function ProfilePage() {
               <img
                 alt=""
                 className="w-56 h-56 rounded-full object-cover"
-                src={image ? image : userData?.image.url}
+                src={image ? URL.createObjectURL(image) : userData?.image.url}
               ></img>
               {/* https://i.pinimg.com/736x/2e/e4/f3/2ee4f3c2d6cf3a87427e309177c6149b.jpg */}
               <div className="-mt-56 w-56 h-56 flex gap-2 justify-center items-center">
                 {!changingImage && (
-                  <button
-                    onClick={handleUploadImage}
-                    className="flex gap-2 rounded px-2 py-1 items-center font-semibold bg-blue-gray-100 opacity-20 hover:opacity-70"
-                  >
+                  <label className="flex gap-2 rounded px-2 py-1 items-center font-semibold bg-blue-gray-100 opacity-20 hover:opacity-70">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       height="1.2rem"
@@ -212,11 +192,19 @@ function ProfilePage() {
                       <path d="M448 80c8.8 0 16 7.2 16 16V415.8l-5-6.5-136-176c-4.5-5.9-11.6-9.3-19-9.3s-14.4 3.4-19 9.3L202 340.7l-30.5-42.7C167 291.7 159.8 288 152 288s-15 3.7-19.5 10.1l-80 112L48 416.3l0-.3V96c0-8.8 7.2-16 16-16H448zM64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H64zm80 192a48 48 0 1 0 0-96 48 48 0 1 0 0 96z" />
                     </svg>
                     <h6>Change</h6>
-                  </button>
+                    <input
+                      type="file"
+                      className="hidden"
+                      accept="image/*"
+                      
+                      onChange={(event) => handleUploadImage(event)}
+                    ></input>
+                  </label>
                 )}
                 {changingImage && (
                   <>
                     <button
+                      type="submit"
                       onClick={handleSaveImage}
                       className="flex gap-2 rounded px-2 py-1 items-center font-semibold bg-green-300 opacity-50 hover:opacity-70"
                     >
