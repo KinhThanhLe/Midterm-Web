@@ -31,7 +31,7 @@ function SignupPage() {
     setIsLoading(true);
     try {
       const response = await axios.post(
-        "https://be-midterm-web.vercel.app/user/register",
+        "/user/register",
         {
           username: userName,
           password: passWord,

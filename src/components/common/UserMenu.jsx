@@ -26,7 +26,7 @@ function UserMenu({ user, isLight }) {
     const fetchUserProfile = async () => {
       try {
         const response = await axios.get(
-          "https://be-midterm-web.vercel.app/user/profile",
+          "/user/profile",
           {
             headers: {
               Authorization: `Bearer ${tokenAvailable}`,

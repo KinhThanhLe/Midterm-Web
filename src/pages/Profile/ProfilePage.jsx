@@ -19,7 +19,7 @@ function ProfilePage() {
   const handleUpdateUser = async () => {
     try {
       const response = await axios.patch(
-        "https://be-midterm-web.vercel.app/user/profile",
+        "/user/profile",
         {
           username: userData.username,
           password: userData.password,
@@ -88,15 +88,8 @@ function ProfilePage() {
     data.append('file', image, image.name);
     const storedToken = localStorage.getItem("token");
 
-
-    // axios.post("https://be-midterm-web.vercel.app/upload/image", imageData, {
-    //   headers: {
-    //     Authorization: `Bearer ${token.data}`,
-    //   },
-    // })
-
     axios
-      .patch("https://be-midterm-web.vercel.app/user/avatar", data, {
+      .patch("/user/avatar", data, {
         headers: {
           Authorization: `Bearer ${storedToken}`,
           accept: "application/json",
@@ -121,7 +114,7 @@ function ProfilePage() {
     const fetchUserProfile = async () => {
       try {
         const response = await axios.get(
-          "https://be-midterm-web.vercel.app/user/profile",
+          "/user/profile",
           {
             headers: {
               Authorization: `Bearer ${storedToken}`,

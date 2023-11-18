@@ -19,7 +19,7 @@ function LoginPage() {
     try {
       setIsLoading(true);
 
-      const response = await axios.post('https://be-midterm-web.vercel.app/user/login', {
+      const response = await axios.post('/user/login', {
         username: userName,
         password: passWord,
       });
