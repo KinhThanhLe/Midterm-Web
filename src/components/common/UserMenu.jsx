@@ -7,12 +7,12 @@ import {
   MenuItem,
 } from "@material-tailwind/react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from '../../AuthContext';
+import { useAuth } from "../../AuthContext";
 import { useEffect, useState } from "react";
 import axios from "axios";
 function UserMenu({ user, isLight }) {
   const { token, login, logout } = useAuth();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleLogout = (setToken) => {
     logout();
@@ -22,25 +22,28 @@ function UserMenu({ user, isLight }) {
   const [userData, setUserData] = useState(null);
 
   useEffect(() => {
-    const tokenAvailable = localStorage.getItem('token');
+    const tokenAvailable = localStorage.getItem("token");
     const fetchUserProfile = async () => {
       try {
-        const response = await axios.get('https://be-midterm-web.vercel.app/user/profile', {
-          headers: {
-            Authorization: `Bearer ${tokenAvailable}`,
-          },
-        });
+        const response = await axios.get(
+          "https://be-midterm-web.vercel.app/user/profile",
+          {
+            headers: {
+              Authorization: `Bearer ${tokenAvailable}`,
+            },
+          }
+        );
         setUserData(response?.data?.data);
       } catch (error) {
-
-
         // Xử lý các lỗi khác theo ý của bạn
-        console.error('Error fetching user profile:', error.message);
+        console.error("Error fetching user profile:", error.message);
       }
     };
 
     // Gọi hàm fetchUserProfile khi component được tạo
-    fetchUserProfile();
+    if (tokenAvailable) {
+      fetchUserProfile();
+    }
   }, [token, logout]);
 
   return (
@@ -77,7 +80,6 @@ function UserMenu({ user, isLight }) {
                 My Profile
               </Typography>
             </div>
-
           </Link>
         </MenuItem>
         <MenuItem className="flex items-center gap-2">
@@ -129,7 +131,11 @@ function UserMenu({ user, isLight }) {
               fill="#90A4AE"
             />
           </svg>
-          <Typography variant="small" className="font-medium" onClick={handleLogout}>
+          <Typography
+            variant="small"
+            className="font-medium"
+            onClick={handleLogout}
+          >
             Sign Out
           </Typography>
         </MenuItem>

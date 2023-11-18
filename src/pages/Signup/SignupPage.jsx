@@ -2,8 +2,11 @@ import { Button, Input } from "@material-tailwind/react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import classNames from "classnames";
 
 function SignupPage() {
+  const [isLoading, setIsLoading] = useState(false);
+
   const [state, setState] = useState({
     full_name: "",
     phone_number: "",
@@ -13,30 +16,45 @@ function SignupPage() {
     username: "",
     password: "",
   });
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [error, setError] = useState("");
 
-  const handleRegister = async (userName, passWord, fullName, birthDay, addDress, email, phoneNumber) => {
+  const handleRegister = async (
+    userName,
+    passWord,
+    fullName,
+    birthDay,
+    addDress,
+    email,
+    phoneNumber
+  ) => {
+    setIsLoading(true);
     try {
-      const response = await axios.post('https://be-midterm-web.vercel.app/user/register', {
-        username: userName,
-        password: passWord,
-        full_name: fullName,
-        birthday: birthDay,
-        address: addDress,
-        email: email,
-        phone_number: phoneNumber,
-        image: {
-          url: "https://t4.ftcdn.net/jpg/05/49/98/39/360_F_549983970_bRCkYfk0P6PP5fKbMhZMIb07mCJ6esXL.jpg"
+      const response = await axios.post(
+        "https://be-midterm-web.vercel.app/user/register",
+        {
+          username: userName,
+          password: passWord,
+          full_name: fullName,
+          birthday: birthDay,
+          address: addDress,
+          email: email,
+          phone_number: phoneNumber,
+          image: {
+            url: "https://t4.ftcdn.net/jpg/05/49/98/39/360_F_549983970_bRCkYfk0P6PP5fKbMhZMIb07mCJ6esXL.jpg",
+          },
         }
-      });
+      );
 
-      navigate('/sign-in');
+      setTimeout(() => {
+        setIsLoading(false);
+        navigate("/sign-in");
+      }, 2000);
     } catch (error) {
+      setIsLoading(false);
       setError("Username or password incorrect!");
     }
   };
-
 
   function hanldeInputChange(event) {
     const field = event.target.name;
@@ -48,12 +66,28 @@ function SignupPage() {
 
   function handleFormSubmit(event) {
     event.preventDefault();
-    if (state.username === "" || state.password === "" || state.address === "" || state.birthday === "" || state.email === "" || state.full_name === "" || state.phone_number === "") {
+    if (
+      state.username === "" ||
+      state.password === "" ||
+      state.address === "" ||
+      state.birthday === "" ||
+      state.email === "" ||
+      state.full_name === "" ||
+      state.phone_number === ""
+    ) {
       setError("Please fill in all field");
     } else {
       setError("");
       // Pass the history object to handleLogin
-      handleRegister(state.username, state.password, state.full_name, state.birthday, state.address, state.email, state.phone_number);
+      handleRegister(
+        state.username,
+        state.password,
+        state.full_name,
+        state.birthday,
+        state.address,
+        state.email,
+        state.phone_number
+      );
     }
   }
 
@@ -118,10 +152,21 @@ function SignupPage() {
             ></Input>
 
             <Button
-              className="w-full text-center p-3 bg-blue-400 text-sm rounded-md font-semibold"
+              className={classNames(
+                "w-full text-center p-3 bg-blue-400 text-sm rounded-md font-semibold",
+                { "opacity-50 cursor-not-allowed": isLoading }
+              )}
               type="submit"
+              disabled={isLoading}
             >
-              CONTINUE
+              {isLoading ? (
+                <div className="flex items-center justify-center">
+                  <span className="mr-2">Loading...</span>
+                  <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-blue-900"></div>
+                </div>
+              ) : (
+                "CONTINUE"
+              )}
             </Button>
           </div>
         </form>

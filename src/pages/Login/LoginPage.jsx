@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../AuthContext';
 import axios from "axios";
+import classNames from 'classnames';
 
 function LoginPage() {
   const { token, login, logout } = useAuth();
@@ -12,9 +13,12 @@ function LoginPage() {
     password: ""
   });
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async (userName, passWord) => {
     try {
+      setIsLoading(true);
+
       const response = await axios.post('https://be-midterm-web.vercel.app/user/login', {
         username: userName,
         password: passWord,
@@ -23,8 +27,13 @@ function LoginPage() {
       localStorage.setItem('token', receivedToken.data);
       login(receivedToken);
 
-      navigate('/profile');
+      setTimeout(() => {
+        setIsLoading(false);
+        navigate('/profile');
+      }, 2000);
     } catch (error) {
+      setIsLoading(false);
+
       setError("Username or password incorrect!");
     }
   };
@@ -81,10 +90,21 @@ function LoginPage() {
               onChange={(event) => hanldeInputChange(event)}
             ></Input>
             <Button
-              className="w-full text-center p-3 bg-blue-400 text-sm rounded-md font-semibold"
+              className={classNames(
+                "w-full text-center p-3 bg-blue-400 text-sm rounded-md font-semibold",
+                { 'opacity-50 cursor-not-allowed': isLoading }
+              )}
               type="submit"
+              disabled={isLoading}
             >
-              CONTINUE
+              {isLoading ? (
+                <div className="flex items-center justify-center">
+                  <span className="mr-2">Loading...</span>
+                  <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-blue-900"></div>
+                </div>
+              ) : (
+                'CONTINUE'
+              )}
             </Button>
           </div>
         </form>
