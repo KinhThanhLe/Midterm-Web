@@ -86,6 +86,8 @@ function ProfilePage() {
     // send update image request to server
     let data = new FormData();
     data.append('file', image, image.name);
+    const storedToken = localStorage.getItem("token");
+
 
     // axios.post("https://be-midterm-web.vercel.app/upload/image", imageData, {
     //   headers: {
@@ -94,9 +96,9 @@ function ProfilePage() {
     // })
 
     axios
-      .post("https://be-midterm-web.vercel.app/upload/image", data, {
+      .patch("https://be-midterm-web.vercel.app/user/avatar", data, {
         headers: {
-          Authorization: `Bearer ${token.data}`,
+          Authorization: `Bearer ${storedToken}`,
           accept: "application/json",
           "Content-Type": `multipart/form-data; boundary=${data._boundary}`,
         },
