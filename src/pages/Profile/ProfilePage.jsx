@@ -97,6 +97,7 @@ function ProfilePage() {
         },
       })
       .then((response) => {
+        localStorage.setItem('avatarUpdated', 'true');
         console.log("Image updated successfully: ", response);
       })
       .catch((error) => {
@@ -125,12 +126,10 @@ function ProfilePage() {
       } catch (error) {
 
 
-        // Xử lý các lỗi khác theo ý của bạn
         console.error("Error fetching user profile:", error?.message);
       }
     };
 
-    // Gọi hàm fetchUserProfile khi component được tạo
     fetchUserProfile();
   }, [token, logout, navigate]);
 
