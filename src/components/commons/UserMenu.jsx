@@ -7,11 +7,11 @@ import {
   MenuItem,
 } from "@material-tailwind/react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../../AuthContext";
-import { useEffect, useState } from "react";
-import axios from "axios";
-function UserMenu({ user, isLight }) {
-  const { token, login, logout } = useAuth();
+import { AuthContext } from "../../AuthContext";
+import { useContext } from "react";
+
+function UserMenu({ isLight }) {
+  const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleLogout = (setToken) => {
@@ -19,40 +19,11 @@ function UserMenu({ user, isLight }) {
     navigate("/");
   };
 
-  const [userData, setUserData] = useState(null);
-
-  useEffect(() => {
-    const tokenAvailable = localStorage.getItem("token");
-    const fetchUserProfile = async () => {
-      try {
-        const response = await axios.get(
-          "/user/profile",
-          {
-            headers: {
-              Authorization: `Bearer ${tokenAvailable}`,
-            },
-          }
-        );
-        setUserData(response?.data?.data);
-        localStorage.removeItem('avatarUpdated');
-
-      } catch (error) {
-        console.error("Error fetching user profile:", error.message);
-      }
-    };
-
-    if (tokenAvailable) {
-      fetchUserProfile();
-    }
-  }, [token, logout]);
-
-
-
   return (
     <Menu>
       <MenuHandler>
         <Avatar
-          src={userData?.image?.url}
+          src={user?.image?.url}
           alt="avatar"
           size="sm"
           withBorder={true}

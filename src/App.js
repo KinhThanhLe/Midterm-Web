@@ -3,9 +3,9 @@ import './App.css';
 import LandingPage from './pages/Landing/LandingPage';
 import LoginPage from './pages/Login/LoginPage';
 import SignupPage from './pages/Signup/SignupPage';
-import Footer from './components/common/Footer';
+import Footer from './components/commons/Footer';
 import ProfilePage from './pages/Profile/ProfilePage';
-import Header from './components/common/Header';
+import Header from './components/commons/Header';
 import HomePage from './pages/Home/Home';
 
 const lightHeaderPaths = ["/profile", "/home"]
@@ -17,7 +17,7 @@ function App() {
   const isLightHeader = lightHeaderPaths.includes(location.pathname);
   const isNoHeader = isNoHeaderFooterPaths.includes(location.pathname);
   const isLoggedIn = localStorage.getItem('token');
-
+  
   return (
     <>
       {!isNoHeader && <Header isLight={isLightHeader}></Header>}
