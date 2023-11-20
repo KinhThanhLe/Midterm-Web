@@ -52,7 +52,7 @@ function SignupPage() {
       }, 2000);
     } catch (error) {
       setIsLoading(false);
-      setError("Username or password incorrect!");
+      setError(error.response.data.message);
     }
   };
 
@@ -62,6 +62,7 @@ function SignupPage() {
       ...state,
       [field]: event.target.value,
     });
+    setError(null);
   }
 
   function handleFormSubmit(event) {
@@ -75,9 +76,9 @@ function SignupPage() {
       state.full_name === "" ||
       state.phone_number === ""
     ) {
-      setError("Please fill in all field");
+      setError("Please fill in all fields");
     } else {
-      setError("");
+      setError(null);
       // Pass the history object to handleLogin
       handleRegister(
         state.username,
@@ -102,9 +103,6 @@ function SignupPage() {
           <h1 className="text-center font-extrabold text-3xl mt-5 mb-10 text-blue-gray-800">
             Sign up
           </h1>
-          {error && (
-            <h6 className="text-red-600 italic text-sm mb-4">{error}</h6>
-          )}
           <div className="flex flex-col gap-10">
             <Input
               name="full_name"
@@ -150,7 +148,9 @@ function SignupPage() {
               type="password"
               onChange={(event) => hanldeInputChange(event)}
             ></Input>
-
+            <h6 className="text-red-600 italic text-sm -mt-2">
+              {error ? error : ""}
+            </h6>
             <Button
               className={classNames(
                 "w-full text-center p-3 bg-blue-400 text-sm rounded-md font-semibold",

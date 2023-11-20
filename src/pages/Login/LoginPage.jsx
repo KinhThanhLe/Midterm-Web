@@ -34,10 +34,9 @@ function LoginPage() {
       setIsLoading(false);
 
       setError("Username or password incorrect!");
+      console.log(error);
     }
   };
-
-
 
   function hanldeInputChange(event) {
     const field = event.target.name;
@@ -45,6 +44,7 @@ function LoginPage() {
       ...state,
       [field]: event.target.value
     });
+    setError(null);
   }
 
   function handleFormSubmit(event) {
@@ -71,9 +71,7 @@ function LoginPage() {
           <h1 className="text-center font-extrabold text-3xl mt-5 mb-10 text-blue-gray-800">
             Sign in
           </h1>
-          {error && (
-            <h6 className="text-red-600 italic text-sm mb-4">{error}</h6>
-          )}
+
           <div className="flex flex-col gap-10">
             <Input
               name="username"
@@ -88,10 +86,11 @@ function LoginPage() {
               type="password"
               onChange={(event) => hanldeInputChange(event)}
             ></Input>
+            <h6 className="text-red-600 italic text-sm -mt-2">{error ? error : ""}</h6>
             <Button
               className={classNames(
                 "w-full text-center p-3 bg-blue-400 text-sm rounded-md font-semibold",
-                { 'opacity-50 cursor-not-allowed': isLoading }
+                { "opacity-50 cursor-not-allowed": isLoading }
               )}
               type="submit"
               disabled={isLoading}
@@ -102,11 +101,12 @@ function LoginPage() {
                   <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-blue-900"></div>
                 </div>
               ) : (
-                'CONTINUE'
+                "CONTINUE"
               )}
             </Button>
           </div>
         </form>
+
         <div className="mt-10 flex gap-2 items-center">
           <h1 className="text-sm text-gray-700">
             Did not have an account yet?
