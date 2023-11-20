@@ -37,12 +37,10 @@ function UserMenu({ user, isLight }) {
         localStorage.removeItem('avatarUpdated');
 
       } catch (error) {
-        // Xử lý các lỗi khác theo ý của bạn
         console.error("Error fetching user profile:", error.message);
       }
     };
 
-    // Gọi hàm fetchUserProfile khi component được tạo
     if (tokenAvailable) {
       fetchUserProfile();
     }

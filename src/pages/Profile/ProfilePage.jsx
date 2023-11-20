@@ -34,22 +34,20 @@ function ProfilePage() {
         },
         {
           headers: {
-            Authorization: `Bearer ${token.data}`, // Assuming you have a token variable
+            Authorization: `Bearer ${token.data}`,
           },
         }
       );
 
-      // Handle success, e.g., navigate to a different page
-      console.log("User updated successfully:", response?.data);
+
     } catch (error) {
-      // Handle error, e.g., show an error message
+
       console.error("Error updating user:", error.message);
     }
   };
 
   function onSaveProfileClick() {
-    // get the new profile and send it to server
-    // save the new user to
+
     handleUpdateUser();
     setEdit(false);
   }
@@ -59,16 +57,13 @@ function ProfilePage() {
   }
 
   function onCancelClick(source) {
-    console.log(source);
     switch (source) {
       case "image-change":
         setChanginImage(false);
         setImage(userData?.image?.url);
-        // reload user image here
         break;
 
       case "profile-change":
-        // reload user profile here
         setEdit(false);
         break;
       default:
@@ -77,7 +72,6 @@ function ProfilePage() {
   }
 
   function handleUploadImage(event) {
-    console.log(event.target.files[0]);
     setImage(event.target.files[0]);
     setChanginImage(true);
   }
@@ -97,7 +91,6 @@ function ProfilePage() {
         },
       })
       .then((response) => {
-        console.log("Image updated successfully: ", response);
         window.location.reload();
       })
       .catch((error) => {
@@ -111,7 +104,6 @@ function ProfilePage() {
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
 
-    console.log(storedToken);
     const fetchUserProfile = async () => {
       try {
         const response = await axios.get(
