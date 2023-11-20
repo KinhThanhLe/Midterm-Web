@@ -48,30 +48,7 @@ function UserMenu({ user, isLight }) {
     }
   }, [token, logout]);
 
-  useEffect(() => {
-    const tokenAvailable = localStorage.getItem("token");
-    const fetchUserProfile = async () => {
-      try {
-        const response = await axios.get(
-          "/user/profile",
-          {
-            headers: {
-              Authorization: `Bearer ${tokenAvailable}`,
-            },
-          }
-        );
-        setUserData(response?.data?.data);
-        localStorage.removeItem('avatarUpdated');
 
-      } catch (error) {
-        console.error("Error fetching user profile:", error.message);
-      }
-    };
-    const avatarUpdated = localStorage.getItem('avatarUpdated');
-    if (avatarUpdated) {
-      fetchUserProfile();
-    }
-  }, [localStorage.getItem('avatarUpdated')]);
 
   return (
     <Menu>

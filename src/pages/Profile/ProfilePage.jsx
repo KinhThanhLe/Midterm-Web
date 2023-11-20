@@ -97,8 +97,8 @@ function ProfilePage() {
         },
       })
       .then((response) => {
-        localStorage.setItem('avatarUpdated', 'true');
         console.log("Image updated successfully: ", response);
+        window.location.reload();
       })
       .catch((error) => {
         console.error("Error updating image:", error.message);
