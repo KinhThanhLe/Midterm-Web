@@ -7,7 +7,7 @@ const founders = [
     id: "20120472",
     name: "Hien Thai",
     image:
-      "https://i.pinimg.com/564x/4e/26/42/4e264223c3ea2db92c47456f6438c77f.jpg",
+      "/founder 2.png",
     facebook: "dsfads",
     linkedin: "dsfads",
     github: "adsfsad",
@@ -16,7 +16,7 @@ const founders = [
     id: "20120373",
     name: "Thanh Le",
     image:
-      "https://i.pinimg.com/564x/4e/26/42/4e264223c3ea2db92c47456f6438c77f.jpg",
+      "founder 1.png",
     facebook: "dsfads",
     linkedin: "dsfads",
     github: "adsfsad",
@@ -25,7 +25,7 @@ const founders = [
     id: "20120468",
     name: "Hai Nguyen",
     image:
-      "https://i.pinimg.com/564x/4e/26/42/4e264223c3ea2db92c47456f6438c77f.jpg",
+      "founder 3.png",
     facebook: "dsfads",
     linkedin: "dsfads",
     github: "adsfsad",
@@ -35,9 +35,12 @@ const founders = [
 function LandingPage() {
 
   return (
-    <div className="pb-10">
-      <div className="h-[600px] bg-cover flex items-center justify-center" style={{ backgroundImage: "url('/panel.png')" }}>
-        <div className="w-9/12 flex justify-between">
+    <div>
+      <div
+        className="h-[400px] md:h-[500px] lg:h-[600px] bg-cover flex items-center justify-center"
+        style={{ backgroundImage: "url('/panel.png')" }}
+      >
+        <div className="w-9/12 flex justify-between items-center">
           <div className="mt-20">
             <h1 className="font-extrabold text-gray-300 text-4xl">
               MIDTERM PROJECT
@@ -58,7 +61,7 @@ function LandingPage() {
             </div>
           </div>
           <img
-            className="block animate-spin-slow react-logo"
+            className="block animate-spin-slow react-logo w-[200px] h-[200px] lg:w-[300px] lg:h-[300px] xl:w-[400px] xl:h-[400px]"
             src="/logo512.png"
           ></img>
         </div>
