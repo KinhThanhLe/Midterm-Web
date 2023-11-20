@@ -1,152 +1,105 @@
 import { Input } from "@material-tailwind/react";
-import FormData from 'form-data'
-import { useAuth } from "../../AuthContext";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import FormData from "form-data";
+import { useContext, useState } from "react";
 import axios from "axios";
+import { AuthContext } from "../../AuthContext";
+
 const EventSource = {
   IMAGE_CHANGE: "image-change",
   PROFILE_CHANGE: "profile-change",
 };
 
 function ProfilePage() {
-  const navigate = useNavigate();
-  const { token, login, logout } = useAuth();
+  const { user, updateUser, token } = useContext(AuthContext);
   const [edit, setEdit] = useState(false);
   const [changingImage, setChanginImage] = useState(false);
   const [image, setImage] = useState("");
+  const [userData, setUserData] = useState({ ...user });
+  const [savingImage, setSavingImage] = useState(false);
+  const [savingProfile, setSavingProfile] = useState(false);
 
-  const handleUpdateUser = async () => {
-    try {
-      const response = await axios.patch(
-        "/user/profile",
-        {
-          username: userData.username,
-          password: userData.password,
-          full_name: userData.full_name,
-          birthday: userData.birthday,
-          address: userData.address,
-          email: userData.email,
-          phone_number: userData.phone_number,
-          image: {
-            url: userData.image.url,
-          },
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token.data}`, // Assuming you have a token variable
-          },
-        }
-      );
-
-      // Handle success, e.g., navigate to a different page
-      console.log("User updated successfully:", response?.data);
-    } catch (error) {
-      // Handle error, e.g., show an error message
-      console.error("Error updating user:", error.message);
-    }
-  };
-
-  function onSaveProfileClick() {
-    // get the new profile and send it to server
-    // save the new user to
-    handleUpdateUser();
-    setEdit(false);
-  }
-
-  function onEditProfileClick() {
+  function handleEditProfileClick() {
     setEdit(true);
   }
 
-  function onCancelClick(source) {
-    console.log(source);
-    switch (source) {
-      case "image-change":
-        setChanginImage(false);
-        setImage(userData?.image?.url);
-        // reload user image here
-        break;
+  const handleInputProfileChange = (field, value) => {
+    setUserData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
 
-      case "profile-change":
-        // reload user profile here
+  function handleSaveProfile() {
+    setSavingProfile(true);
+    axios
+      .patch("/user/profile", userData, {
+        headers: {
+          Authorization: `Bearer ${token}`, // Assuming you have a token variable
+        },
+      })
+      .then((response) => {
+        updateUser(response.data.data);
+        setSavingProfile(false);
         setEdit(false);
-        break;
-      default:
-        break;
-    }
+      })
+      .catch((error) => {
+        // Todo
+        // Show alert
+        alert("Something went wrong, please try again!");
+      });
   }
 
   function handleUploadImage(event) {
-    console.log(event.target.files[0]);
     setImage(event.target.files[0]);
     setChanginImage(true);
   }
 
   function handleSaveImage() {
-    // send update image request to server
+    setSavingImage(true);
     let data = new FormData();
-    data.append('file', image, image.name);
-    const storedToken = localStorage.getItem("token");
+    data.append("file", image, image.name);
 
     axios
       .patch("/user/avatar", data, {
         headers: {
-          Authorization: `Bearer ${storedToken}`,
+          Authorization: `Bearer ${token}`,
           accept: "application/json",
           "Content-Type": `multipart/form-data; boundary=${data._boundary}`,
         },
       })
       .then((response) => {
-        console.log("Image updated successfully: ", response);
+        updateUser(response.data.data);
+        setUserData({
+          ...userData,
+          image: response.data.data.image
+        })
+        setChanginImage(false);
+        setSavingImage(false);
       })
       .catch((error) => {
-        console.error("Error updating image:", error.message);
+        setSavingImage(false);
+        // Todo
+        // Show alert
+        alert("Something went wrong, please try again!");
       });
-    setChanginImage(false);
   }
 
-  const [userData, setUserData] = useState(null);
+  function onCancelClick(source) {
+    switch (source) {
+      case EventSource.IMAGE_CHANGE:
+        setChanginImage(false);
+        console.log(userData);
+        setImage(null);
+        break;
 
-  useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-
-    console.log(storedToken);
-    const fetchUserProfile = async () => {
-      try {
-        const response = await axios.get(
-          "/user/profile",
-          {
-            headers: {
-              Authorization: `Bearer ${storedToken}`,
-            },
-          }
-        );
-        setUserData(response?.data?.data);
-      } catch (error) {
-
-
-        // Xử lý các lỗi khác theo ý của bạn
-        console.error("Error fetching user profile:", error?.message);
-      }
-    };
-
-    // Gọi hàm fetchUserProfile khi component được tạo
-    fetchUserProfile();
-  }, [token, logout, navigate]);
-
-  const [fullName, setFullName] = useState(userData?.full_name || "");
-  const [birthday, setBirthday] = useState(userData?.birthday || "");
-  const [email, setEmail] = useState(userData?.email || "");
-  const [phoneNumber, setPhoneNumber] = useState(userData?.phone_number || "");
-  const [address, setAddress] = useState(userData?.address || "");
-
-  // Update the userData state when the input fields change
-  const handleInputChange = (name, value) => {
-    setUserData((prevUserData) => ({
-      ...prevUserData,
-      [name]: value,
-    }));
-  };
+      case EventSource.PROFILE_CHANGE:
+        console.log("vcl");
+        console.log(user);
+        setUserData({ ...user });
+        setEdit(false);
+        break;
+    }
+  }
 
   return (
     <div>
@@ -173,11 +126,10 @@ function ProfilePage() {
               <img
                 alt=""
                 className="w-56 h-56 rounded-full object-cover"
-                src={image ? URL.createObjectURL(image) : userData?.image.url}
+                src={image ? URL.createObjectURL(image) : userData.image.url}
               ></img>
-              {/* https://i.pinimg.com/736x/2e/e4/f3/2ee4f3c2d6cf3a87427e309177c6149b.jpg */}
               <div className="-mt-56 w-56 h-56 flex gap-2 justify-center items-center">
-                {!changingImage && (
+                {!changingImage && !savingImage && (
                   <label className="flex gap-2 rounded px-2 py-1 items-center font-semibold bg-blue-gray-100 opacity-20 hover:opacity-70">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -191,12 +143,11 @@ function ProfilePage() {
                       type="file"
                       className="hidden"
                       accept="image/*"
-
                       onChange={(event) => handleUploadImage(event)}
                     ></input>
                   </label>
                 )}
-                {changingImage && (
+                {changingImage && !savingImage && (
                   <>
                     <button
                       type="submit"
@@ -227,18 +178,31 @@ function ProfilePage() {
                     </button>
                   </>
                 )}
+                {savingImage && (
+                  <button className="w-56 h-56 rounded-full bg-blue-gray-100 opacity-60 flex items-center justify-center gap-2 font-bold" disabled>
+                    <svg
+                      class="animate-spin mr ..."
+                      xmlns="http://www.w3.org/2000/svg"
+                      height="1.25em"
+                      viewBox="0 0 512 512"
+                    >
+                      <path d="M304 48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zm0 416a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM48 304a48 48 0 1 0 0-96 48 48 0 1 0 0 96zm464-48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM142.9 437A48 48 0 1 0 75 369.1 48 48 0 1 0 142.9 437zm0-294.2A48 48 0 1 0 75 75a48 48 0 1 0 67.9 67.9zM369.1 437A48 48 0 1 0 437 369.1 48 48 0 1 0 369.1 437z" />
+                    </svg>
+                    <h6>Saving...</h6>
+                  </button>
+                )}
               </div>
             </div>
           </div>
           <div className="-mt-[150px] bg-white rounded-xl shadow-lg p-10">
             <div className="w-8/12">
-              <div className="flex justify-between items-center">
-                <h1 className="text-blue-gray-800 text-lg font-bold mb-8">
+              <div className="flex justify-between items-center mb-8">
+                <h1 className="text-blue-gray-800 text-lg font-bold">
                   User information
                 </h1>
-                {!edit && (
+                {!edit && !savingProfile && (
                   <button
-                    onClick={() => onEditProfileClick()}
+                    onClick={() => handleEditProfileClick()}
                     className="flex items-center gap-2 text-blue-gray-300 hover:text-blue-gray-500 fill-blue-gray-300 font-semibold hover:fill-blue-gray-500"
                   >
                     <svg
@@ -253,10 +217,10 @@ function ProfilePage() {
                   </button>
                 )}
 
-                {edit && (
+                {edit && !savingProfile && (
                   <div className="flex gap-4">
                     <button
-                      onClick={onSaveProfileClick}
+                      onClick={handleSaveProfile}
                       className="flex items-center gap-1 text-green-200 hover:text-green-500 fill-green-200 font-semibold hover:fill-green-500"
                     >
                       <svg
@@ -283,6 +247,23 @@ function ProfilePage() {
                     </button>
                   </div>
                 )}
+
+                {savingProfile && (
+                  <button
+                    className="flex items-center gap-1 text-blue-gray-500 font-semibold fill-blue-gray-500"
+                    disabled
+                  >
+                    <svg
+                      class="animate-spin mr ..."
+                      xmlns="http://www.w3.org/2000/svg"
+                      height="1em"
+                      viewBox="0 0 512 512"
+                    >
+                      <path d="M304 48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zm0 416a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM48 304a48 48 0 1 0 0-96 48 48 0 1 0 0 96zm464-48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM142.9 437A48 48 0 1 0 75 369.1 48 48 0 1 0 142.9 437zm0-294.2A48 48 0 1 0 75 75a48 48 0 1 0 67.9 67.9zM369.1 437A48 48 0 1 0 437 369.1 48 48 0 1 0 369.1 437z" />
+                    </svg>
+                    <small>Saving...</small>
+                  </button>
+                )}
               </div>
               <form>
                 <div className="grid grid-cols-2 gap-8">
@@ -291,9 +272,9 @@ function ProfilePage() {
                     variant="standard"
                     label="Full name"
                     onChange={(e) => {
-                      handleInputChange("full_name", e.target.value);
+                      handleInputProfileChange("full_name", e.target.value);
                     }}
-                    defaultValue={userData?.full_name}
+                    value={userData?.full_name}
                     readOnly={!edit}
                     size="lg"
                   />
@@ -303,9 +284,9 @@ function ProfilePage() {
                     variant="standard"
                     label="Birthday"
                     onChange={(e) => {
-                      handleInputChange("birthday", e.target.value);
+                      handleInputProfileChange("birthday", e.target.value);
                     }}
-                    defaultValue={userData?.birthday}
+                    value={userData?.birthday}
                     readOnly={!edit}
                     size="lg"
                   />
@@ -314,9 +295,9 @@ function ProfilePage() {
                     variant="standard"
                     label="Email"
                     onChange={(e) => {
-                      handleInputChange("email", e.target.value);
+                      handleInputProfileChange("email", e.target.value);
                     }}
-                    defaultValue={userData?.email}
+                    value={userData?.email}
                     readOnly={!edit}
                     size="lg"
                   />
@@ -325,9 +306,9 @@ function ProfilePage() {
                     variant="standard"
                     label="phone_number"
                     onChange={(e) => {
-                      handleInputChange("phone_number", e.target.value);
+                      handleInputProfileChange("phone_number", e.target.value);
                     }}
-                    defaultValue={userData?.phone_number}
+                    value={userData?.phone_number}
                     readOnly={!edit}
                     size="lg"
                   />
@@ -337,9 +318,9 @@ function ProfilePage() {
                       variant="standard"
                       label="Address"
                       onChange={(e) => {
-                        handleInputChange("address", e.target.value);
+                        handleInputProfileChange("address", e.target.value);
                       }}
-                      defaultValue={userData?.address}
+                      value={userData?.address}
                       readOnly={!edit}
                       size="lg"
                     />

@@ -1,12 +1,12 @@
 import { Button, Input } from "@material-tailwind/react";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../../AuthContext';
+import { AuthContext } from '../../AuthContext';
 import axios from "axios";
 import classNames from 'classnames';
 
 function LoginPage() {
-  const { token, login, logout } = useAuth();
+  const { token, login, logout } = useContext(AuthContext);
   const navigate = useNavigate()
   const [state, setState] = useState({
     username: "",
@@ -23,13 +23,12 @@ function LoginPage() {
         username: userName,
         password: passWord,
       });
-      const receivedToken = response.data;
-      localStorage.setItem('token', receivedToken.data);
+      const receivedToken = response.data.data;
       login(receivedToken);
 
       setTimeout(() => {
         setIsLoading(false);
-        navigate('/profile');
+        navigate('/');
       }, 2000);
     } catch (error) {
       setIsLoading(false);

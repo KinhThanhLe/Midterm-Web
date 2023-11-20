@@ -1,28 +1,52 @@
-import { createContext, useContext, useState } from 'react';
+import axios from 'axios';
+import { createContext, useState } from 'react';
 
 const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
+function AuthProvider({ children }) {
   const [token, setToken] = useState(() => localStorage.getItem('token') || null);
-
-  const login = (receivedToken) => {
-    setToken(receivedToken);
-
+  const [user, setUser] = useState(() => {
+    return localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null;
+  });
+  
+  function login(token) {
+    localStorage.setItem('token', token);
+    setToken(token);
+    loadUser(token);
   };
 
-  const logout = () => {
+  function logout() {
     setToken(null);
     localStorage.removeItem('token');
-
+    localStorage.removeItem('user');
   };
 
+  function updateUser(user) {
+    localStorage.removeItem('user');
+    localStorage.setItem('user', JSON.stringify(user));
+    setUser(user);
+  }
+
+  function loadUser(token) {
+    axios.get("/user/profile", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then(res => {
+        setUser(res.data.data);
+        localStorage.setItem('user', JSON.stringify(res.data.data));
+      }).catch((error) => {
+
+      });
+  }
+
   return (
-    <AuthContext.Provider value={{ token, login, logout }}>
+    <AuthContext.Provider value={{ user, token, updateUser, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuth = () => {
-  return useContext(AuthContext);
-};
+
+export { AuthContext, AuthProvider };

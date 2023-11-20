@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useContext } from "react";
 import UserMenu from "./UserMenu";
 import { Link } from "react-router-dom";
-import { useAuth } from '../../AuthContext';
+import { AuthContext } from '../../AuthContext';
 
 const menuItems = [
   {
@@ -19,12 +19,7 @@ const menuItems = [
 ];
 
 function Header({ isLight }) {
-  const [user, setUser] = useState(null);
-  const { token, login, logout } = useAuth();
-
-  useEffect(() => {
-    setUser(token);
-  }, [token]);
+  const { token, login, logout } = useContext(AuthContext);
 
   return (
     <div
@@ -36,16 +31,6 @@ function Header({ isLight }) {
           <h1 className="text-2xl">GROUPXX</h1>
         </Link>
         <div className="flex gap-10 items-center">
-          {user && (
-            <Link
-              to="/profile"
-              className={`font-semibold ${isLight ? "text-blue-gray-900" : "text-white"
-                } hover:text-gray-500`}
-              href="#"
-            >
-              Profile
-            </Link>
-          )}
           {menuItems.map((item) => (
             <Link to={item.href}>
               <h6
@@ -56,7 +41,7 @@ function Header({ isLight }) {
               </h6>
             </Link>
           ))}
-          {!user && (
+          {!token && (
             <Link
               to="/sign-in"
               className={`font-semibold ${isLight ? "text-blue-gray-900" : "text-white"
@@ -67,7 +52,7 @@ function Header({ isLight }) {
             </Link>
           )}
 
-          {user && <UserMenu user={user} isLight={isLight}></UserMenu>}
+          {token && <UserMenu isLight={isLight}></UserMenu>}
         </div>
       </div>
     </div>
